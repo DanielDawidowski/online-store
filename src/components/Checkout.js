@@ -1,16 +1,22 @@
 import React from 'react';
 import { Container, Box, Button, Heading, Text, TextField } from "gestalt";
 import ToastMessage from "./ToastMessage";
+import { getCart, calculatePrice } from "../utils";
 
 class Checkout extends React.Component {
 
     state = {
+        cartItems: [],
         address:'',
         postalCode:'',
         city:'',
         confirmationEmailAddress: '',
         toast: false,
         toastMessage: ''
+    }
+
+    componentDidMount() {
+        this.setState({ cartItems: getCart()})
     }
 
     handleChange = ({ event, value}) => {
@@ -39,7 +45,7 @@ class Checkout extends React.Component {
 
     render() {
 
-        const { toast, toastMessage } = this.state;
+        const { toast, toastMessage, cartItems } = this.state;
 
         return (
             <Container>
@@ -50,7 +56,39 @@ class Checkout extends React.Component {
                     shape="rounded"
                     display="flex"
                     justifyContent="center"
+                    alignItems="center"
+                    direction="column"
                 >
+
+                {/* Checkout Form Heading */}
+                        
+                <Heading color="midnight">Checkout</Heading>
+                    
+                    {cartItems.length> 0 ? <React.Fragment>
+                    {/* User Cart */}
+                        <Box
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                            direction="column"
+                            marginTop={2}
+                            marginBottom={6}
+                        >
+                            <Text color="darkGray" italic>{cartItems.length} Items For Checkout</Text>
+                            <Box padding={2}>
+                                {cartItems.map(item => (
+                                    <Box key={item._id} padding={1}>
+                                        <Text color="midnight">
+                                            {item.name} x {item.quantity} - ${item.quantity * item.price}
+                                        </Text>
+                                    </Box>
+                                ))}
+                            </Box>
+                            <Text bold>Total Amout: {calculatePrice(cartItems)}</Text>
+                        </Box>
+
+
+
                     {/* Checkout Form */}
                     <form style={{
                         display:'inlineBlock',
@@ -59,9 +97,7 @@ class Checkout extends React.Component {
                     }}
                         onSubmit={this.handleConfirmOrder}
                     >
-                        {/* Checkout Form Heading */}
-                        
-                            <Heading color="midnight">Checkout</Heading>                         
+                                               
                        
                         {/* Shipping Address Input */}
                         <TextField
@@ -98,6 +134,14 @@ class Checkout extends React.Component {
                         
                         <button id="stripe__button" type="submit">Submit</button>    
                     </form>
+                </React.Fragment> : (
+                    // Default Text if No Items in Cart
+                    <Box color="darkWash" shape="rounded" padding={4}>
+                        <Heading align="center" color="watermelon" size="xs">Your Cart is Empty</Heading>
+                        <Text align="center" italic color="green">Add some brews</Text>
+                    </Box>
+                )} 
+                    
                 </Box>
                 <ToastMessage show={toast} message ={toastMessage} />
             </Container>
