@@ -10,7 +10,8 @@
     "react-scripts": "1.1.5",
     "react-spinners": "^0.4.5",
     "react-stripe-elements": "^2.0.1",
-    "strapi-sdk-javascript": "^0.2.1"
+    "strapi-sdk-javascript": "^0.2.1",
+    "stripe": "^7.8.0"
   },
   "scripts": {
     "start": "react-scripts start",
